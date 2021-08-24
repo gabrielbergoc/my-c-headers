@@ -1,10 +1,9 @@
 /*
-matrix.c
+matrix.h
 author: Gabriel Bergoc
 started: 2021-08-23
 
-future matrix.h
-meant to have basic matrix manipulations
+objective: basic matrix manipulations
 
 already has:
 - createMatrix (to dynamically allocate a 2D matrix)
@@ -43,23 +42,6 @@ double determinant(double** matrix, int nRows);
 double** transposeMatrix(double** matrix, int nRows, int nColumns);
 double** cofactorsMatrix(double** matrix, int nRows);
 double** inverseMatrix(double** matrix, int nRows);
-
-
-int main() {
-    int nRowsA = 0;
-    int nColumnsA = 0;
-    scanf(" %d %d", &nRowsA, &nColumnsA);
-
-    double** matrixA = createMatrix(nRowsA, nColumnsA);
-    inputMatrix(matrixA, nRowsA, nColumnsA);
-
-    double** matrixB = createMatrix(nRowsA, nColumnsA);
-    inputMatrix(matrixB, nRowsA, nColumnsA);
-
-    printMatrix(sumMatrices(matrixA, matrixB, nRowsA, nColumnsA), nRowsA, nColumnsA);
-
-    return 0;
-}
 
 
 // returns a pointer to an array of pointers to doubles
