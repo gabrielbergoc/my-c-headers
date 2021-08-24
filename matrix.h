@@ -32,7 +32,7 @@ void inputMatrix(double** matrix, int nRows, int nColumns);
 void printMatrix(double** matrix, int nRows, int nColumns);
 double** sumMatrices(double** matrixA, double** matrixB, int nRows, int nColumns);
 double** subtractionMatrices(double** matrixA, double** matrixB, int nRows, int nColumns);
-double** scalarMatrixMultiplication(double** matrix, int nRows, int nColumns, double scalar);
+double** scalarMatrixMultiplication(double scalar, double** matrix, int nRows, int nColumns);
 double** multiplyMatrices(
     double** matrixA, int nRowsA, int nColumnsA, 
     double** matrixB, int nRowsB, int nColumnsB
@@ -69,16 +69,22 @@ double** createMatrix(int nRows, int nColumns) {
 }
 
 void inputMatrix(double** matrix, int nRows, int nColumns) {
-    for (int i = 0; i < nRows; i++) {
-        for (int j = 0; j < nColumns; j++) {
-            scanf(" %lf", *(matrix + i) + j);
+
+    if (matrix == NULL) {
+        printf("There's no such matrix.\n");
+    } else {
+        for (int i = 0; i < nRows; i++) {
+            for (int j = 0; j < nColumns; j++) {
+                scanf(" %lf", *(matrix + i) + j);
+            }
         }
-    }
+    }   
 }
 
 void printMatrix(double** matrix, int nRows, int nColumns) {
+
     if (matrix == NULL) {
-        printf("There's no such matrix.");
+        printf("There's no such matrix.\n");
     } else {
         for (int i = 0; i < nRows; i++) {
             for (int j = 0; j < nColumns; j++) {
@@ -86,11 +92,13 @@ void printMatrix(double** matrix, int nRows, int nColumns) {
             }
             printf("\n");
         }
+        printf("\n");
     }
 }
 
 // returns a pointer to a matrix that is the sum of two matrices
 double** sumMatrices(double** matrixA, double** matrixB, int nRows, int nColumns) {
+    
     double** resMatrix = createMatrix(nRows, nColumns);
 
     for (int i = 0; i < nRows; i++) {
@@ -104,6 +112,7 @@ double** sumMatrices(double** matrixA, double** matrixB, int nRows, int nColumns
 
 // returns a pointer to a matrix that is the subtraction of two matrices
 double** subtractionMatrices(double** matrixA, double** matrixB, int nRows, int nColumns) {
+    
     double** resMatrix = createMatrix(nRows, nColumns);
 
     for (int i = 0; i < nRows; i++) {
@@ -116,7 +125,8 @@ double** subtractionMatrices(double** matrixA, double** matrixB, int nRows, int 
 }
 
 // returns a pointer to a matrix multiplied by a scalar
-double** scalarMatrixMultiplication(double** matrix, int nRows, int nColumns, double scalar) {
+double** scalarMatrixMultiplication(double scalar, double** matrix, int nRows, int nColumns) {
+    
     double** resMatrix = createMatrix(nRows, nColumns);
     
     for (int i = 0; i < nRows; i++) {
@@ -158,6 +168,7 @@ double** multiplyMatrices(
 
 // removes a row and a column from a matrix, returns a pointer to resulting matrix
 double** cutMatrix(double** matrix, int nRows, int excluded_i, int excluded_j) {
+    
     double** miniMatrix = createMatrix(nRows - 1, nRows - 1);
 
     for (int i = 0, k = 0; i < nRows; i++) {
@@ -169,7 +180,7 @@ double** cutMatrix(double** matrix, int nRows, int excluded_i, int excluded_j) {
             if (j == excluded_j) {
                 continue;
             }
-            *(*(miniMatrix + k) + l) = matrix[i][j];
+            *(*(miniMatrix + k) + l) = *(*(matrix + i) + j);
             l++;
             atr = true;
         }
@@ -186,6 +197,7 @@ double** cutMatrix(double** matrix, int nRows, int excluded_i, int excluded_j) {
 // algorithm: Laplace expansion
 // complexity: O(n!)
 double determinant(double** matrix, int nRows) {
+    
     if (nRows == 1) {
         return** matrix;
     }
@@ -202,6 +214,7 @@ double determinant(double** matrix, int nRows) {
 
 // returns a pointer to a matrix that is the transpose of original matrix
 double** transposeMatrix(double** matrix, int nRows, int nColumns) {
+    
     double** resMatrix = createMatrix(nRows, nColumns);
 
     for (int i = 0; i < nRows; i++) {
@@ -215,6 +228,7 @@ double** transposeMatrix(double** matrix, int nRows, int nColumns) {
 
 // returns a pointer to the cofactor matrix of original matrix
 double** cofactorsMatrix(double** matrix, int nRows) {
+    
     double** resMatrix = createMatrix(nRows, nRows);
 
     for (int i = 0; i < nRows; i++) {
@@ -229,6 +243,7 @@ double** cofactorsMatrix(double** matrix, int nRows) {
 
 // returns a pointer to inverse matrix, or NULL pointer if there's no inverse
 double** inverseMatrix(double** matrix, int nRows) {
+    
     double det = determinant(matrix, nRows);
     if (det == 0) {
         return NULL;
@@ -237,5 +252,5 @@ double** inverseMatrix(double** matrix, int nRows) {
     double** cofactors = cofactorsMatrix(matrix, nRows);
     double** adjugate = transposeMatrix(cofactors, nRows, nRows);
     
-    return scalarMatrixMultiplication(adjugate, nRows, nRows, 1 / det);
+    return scalarMatrixMultiplication(1 / det, adjugate, nRows, nRows);
 }
