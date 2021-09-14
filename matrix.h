@@ -206,6 +206,9 @@ double determinant(double** matrix, int nRows) {
 
     for (int i = 0; i < nRows; i++) {
         double** smallMatrix = cutMatrix(matrix, nRows, 0, i);
+        if (*(*(matrix) + i) == 0) {
+            continue;
+        }
         det += pow(-1, 1 + (i + 1)) * determinant(smallMatrix, nRows - 1) * *(*(matrix) + i);
     }
 
@@ -253,4 +256,127 @@ double** inverseMatrix(double** matrix, int nRows) {
     double** adjugate = transposeMatrix(cofactors, nRows, nRows);
     
     return scalarMatrixMultiplication(1 / det, adjugate, nRows, nRows);
+}
+
+double** indentityMatrix(int nRows) {
+    double** matrix = createMatrix(nRows, nRows);
+
+    for (int i = 0; i < nRows; i++) {
+        *(*(matrix + i) + i) = 1;
+    }
+
+    return matrix;
+}
+
+double** augmentedMatrix(
+    double** matrixA, int nRowsA, int nColumnsA, 
+    double** matrixB, int nRowsB, int nColumnsB
+    ) {
+    
+    if (nRowsA != nRowsB) {
+        printf("Error: Only matrices with same number of rows can be augmented.\b");
+        return NULL;
+    }
+
+    double** resMatrix = createMatrix(nRowsA, nColumnsA + nColumnsB);
+
+    for (int i = 0; i < nRowsA; i++) {
+        for (int j = 0; j < nColumnsA; j++) {
+            *(*(resMatrix + i) + j) = *(*(matrixA + i) + j);
+        }
+    }
+
+    for (int i = 0; i < nRowsB; i++) {
+        for (int j = 0; j < nColumnsB; j++) {
+            *(*(resMatrix + i) + j + nColumnsA) = *(*(matrixB + i) + j);
+        }
+    }
+
+    return resMatrix;
+
+}
+
+void swapLines(int rowA, int rowB, double** matrix, int nColumns) {
+
+    double* temp = (double*) calloc(nColumns, sizeof(double));
+
+    for (int i = 0; i < nColumns; i++) {
+        *(temp + i) = *(*(matrix + rowA) + i);
+    }
+
+    for (int i = 0; i < nColumns; i++) {
+        *(*(matrix + rowA) + i) = *(*(matrix + rowB) + i);
+    }
+
+    for (int i = 0; i < nColumns; i++) {
+        *(*(matrix + rowB) + i) = *(temp + i);
+    }
+}
+
+void multiplyLine(double scalar, int row, double** matrix, int nColumns) {
+
+    for (int i = 0; i < nColumns; i++) {
+        *(*(matrix + row) + i) *= scalar;
+    }
+}
+
+void sumLineMultiple(double scalar, int rowA, int rowB, double** matrix, int nColumns) {
+    for (int i = 0; i < nColumns; i++) {
+        *(*(matrix + rowB) + i) += *(*(matrix + rowA) + i) * scalar;
+    }
+}
+
+bool compareMatrices(double** matrixA, double** matrixB, int nRows, int nColumns) {
+    bool isEqual = true;
+
+    for (int i = 0; i < nRows && isEqual; i++) {
+        for (int j = 0; j < nColumns && isEqual; j++) {
+            if (*(*(matrixA + i) + j) != *(*(matrixB + i) + j)) {
+                isEqual = false;
+            }
+        }
+    }
+
+    return isEqual;
+}
+
+bool noNullRows(double** matrix, int nRows, int nColumns) {
+    bool hasntNullRow = true;
+
+    for (int i = 0; i < nRows && hasntNullRow; i++) {
+        bool rowIsNull = true;
+
+        for (int j = 0; j < nColumns && rowIsNull; j++) {
+            if (*(*(matrix + i) + j) != 0) {
+                rowIsNull = false;
+            }
+        }
+
+        if (rowIsNull) {
+            hasntNullRow = false;
+        }
+    }
+
+    return hasntNullRow;
+}
+
+void inverseMatrix2(double** matrix, int nRows) {
+
+    bool hasNullRow = !noNullRows(matrix, nRows, nRows);
+    if (hasNullRow) {
+        return NULL;
+    }
+
+    double** resMatrix;
+    double** identity = indentityMatrix(nRows);
+    resMatrix = augmentedMatrix(matrix, nRows, nRows, 
+                                identity, nRows, nRows);
+    
+    int i = 0;
+    while (compareMatrices(resMatrix, identity, nRows, nRows)) {
+        hasNullRow = !noNullRows(matrix, nRows, nRows);
+        if (hasNullRow) {
+            return NULL;
+        }
+    }
 }

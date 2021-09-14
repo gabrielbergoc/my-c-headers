@@ -153,3 +153,4 @@ lib/
 *.exe
 
 william e lucas/
+/CMakeLists.txt
