@@ -100,7 +100,7 @@ int main() {
 
             break;
 
-        case 3: // scalar multiplication
+        case 3:; // scalar multiplication
 
             // get scalar
             double scalar = 0;

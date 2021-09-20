@@ -36,12 +36,23 @@ double** scalarMatrixMultiplication(double scalar, double** matrix, int nRows, i
 double** multiplyMatrices(
     double** matrixA, int nRowsA, int nColumnsA, 
     double** matrixB, int nRowsB, int nColumnsB
-);
+    );
 double** cutMatrix(double** matrix, int nRows, int excluded_i, int excluded_j);
 double determinant(double** matrix, int nRows);
 double** transposeMatrix(double** matrix, int nRows, int nColumns);
 double** cofactorsMatrix(double** matrix, int nRows);
 double** inverseMatrix(double** matrix, int nRows);
+double** indentityMatrix(int nRows);
+double** augmentedMatrix(
+    double** matrixA, int nRowsA, int nColumnsA,
+    double** matrixB, int nRowsB, int nColumnsB
+    );
+void swapLines(int rowA, int rowB, double** matrix, int nColumns);
+void multiplyLine(double scalar, int row, double** matrix, int nColumns);
+void sumLineMultiple(double scalar, int rowA, int rowB, double** matrix, int nColumns);
+bool compareMatrices(double** matrixA, double** matrixB, int nRows, int nColumns);
+bool noNullRows(double** matrix, int nRows, int nColumns);
+void inverseMatrix2(double** matrix, int nRows);    // work in progress
 
 
 // returns a pointer to an array of pointers to doubles
@@ -88,7 +99,7 @@ void printMatrix(double** matrix, int nRows, int nColumns) {
     } else {
         for (int i = 0; i < nRows; i++) {
             for (int j = 0; j < nColumns; j++) {
-                printf("%.2lf ", *(*(matrix + i) + j));
+                printf("%.4lf ", *(*(matrix + i) + j));
             }
             printf("\n");
         }
@@ -364,7 +375,7 @@ void inverseMatrix2(double** matrix, int nRows) {
 
     bool hasNullRow = !noNullRows(matrix, nRows, nRows);
     if (hasNullRow) {
-        return NULL;
+        return;
     }
 
     double** resMatrix;
@@ -376,7 +387,7 @@ void inverseMatrix2(double** matrix, int nRows) {
     while (compareMatrices(resMatrix, identity, nRows, nRows)) {
         hasNullRow = !noNullRows(matrix, nRows, nRows);
         if (hasNullRow) {
-            return NULL;
+            return;
         }
     }
 }
